@@ -37,6 +37,9 @@ sudo mv composer.phar /usr/local/bin/composer
 #configuring website
 cd /var/www/html/
 sudo chmod -R 777 .
-rm -rf *
+rm -rf /var/www/html/*
 git clone https://github.com/MaxandreOgeret/lessn.git .
 composer install
+
+php bin/console do:da:cr
+php bin/console do:sc:up --force
