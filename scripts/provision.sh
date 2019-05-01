@@ -1,6 +1,8 @@
 #!/bin/sh
 
 # Setting up system
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main" > /etc/apt/sources.list.d/PostgreSQL.list'
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install unzip -y
@@ -8,18 +10,17 @@ sudo apt-get install unzip -y
 #installing nginx
 sudo apt install nginx -y
 
-#installing mysql
-sudo apt install mysql-server -y
-
-sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
-sudo mysql -proot -e "DELETE FROM mysql.user WHERE User='';"
-sudo mysql -proot -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
-sudo mysql -proot -e "DROP DATABASE IF EXISTS test;"
-sudo mysql -proot -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
-sudo mysql -proot -e "FLUSH PRIVILEGES;"
+#installing postgres
+sudo apt install -y postgresql-11
+sudo -u postgres createuser lessn -D -R -S
+sudo -u postgres psql -c "ALTER USER lessn WITH PASSWORD 'lessn';"
+sudo -u postgres psql -c "CREATE DATABASE lessn WITH OWNER 'lessn' ENCODING 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8' TEMPLATE template0;"
+sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/11/main/postgresql.conf
+sudo sed -i "s/host    all             all             127.0.0.1\/32            md5/host    all             all            0.0.0.0\/0            md5/g" /etc/postgresql/11/main/pg_hba.conf
+sudo systemctl restart postgresql
 
 #installing php
-sudo apt install php-fpm php-mysql php-xml php-intl php-json -y
+sudo apt install php-fpm php-pgsql php-xml php-intl php-json php-curl php-mbstring -y
 
 #configuring nginx
 sudo cp /install_files/localhost /etc/nginx/sites-available/
@@ -43,3 +44,5 @@ composer install
 
 php bin/console do:da:cr
 php bin/console do:sc:up --force
+
+sudo chmod -R 777 .git/ var/
