@@ -6,6 +6,8 @@ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install unzip -y
+sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+sudo service ssh restart
 
 #installing nginx
 sudo apt install nginx -y
