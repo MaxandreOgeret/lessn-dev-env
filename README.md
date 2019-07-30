@@ -11,4 +11,4 @@ Uses
  - Postgres 11
  - PHP 7.2 & Composer
  
- You connect you can use the key or "vagrant" as login and password.
+ To connect use the ssh key or "vagrant" as login and password.

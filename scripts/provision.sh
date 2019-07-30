@@ -44,7 +44,9 @@ rm -rf /var/www/html/*
 git clone https://github.com/MaxandreOgeret/lessn.git .
 composer install
 
-php bin/console do:da:cr
+sudo -u postgres psql -d lessn -f sql/getChecksum.sql
+sudo -u postgres psql -d lessn -f sql/applySbUpdate.sql
+
 php bin/console do:sc:up --force
 
 sudo chmod -R 777 .git/ var/
